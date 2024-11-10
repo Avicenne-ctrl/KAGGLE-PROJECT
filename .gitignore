@@ -1,0 +1,100 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+.virtualenv/
+./scripts/config.ini
+
+# Distribution/Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+*.whl
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments and IDEs
+.env
+.env.*
+.venv
+.venv.*
+.idea/
+.vscode/
+*.swp
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.db
+
+# Caches
+*.bak
+*.tmp
+*.lock
+*.mo
+*.pot
+*.pid
+*.gz
+*.old
+
+# HDF5 and related
+*.hdf5
+*.h5
+
+# Generated files from LLM models or embeddings
+*.pkl
+*.npy
+
+# Anaconda
+anaconda3/
+conda-meta/
+*.conda
+
+# Configurations
+config.ini
+config.json
+*.cfg
+
+# Ignore chromedriver or other browser drivers
+chromedriver
+*.exe
+
+# Ignore specific API keys or credentials
+*.key
+*.pem
+*.crt
+.secret
+.env.local
