@@ -12,7 +12,7 @@ Here are the different thematics :
 - Computer Vision
 - Natural Language Processing
 - And more to come
-- utilities.py / utilities_plot.py -> redundant function that I've reused in various notebook
+- `utilities.py` / `utilities_plot.py` -> redundant function that I've reused in various notebook
 
 Each subfolder corresponds to a different competition theme. Within these folders, you will find a dedicated `README.md` file that explains:
 - The objective of the competition
