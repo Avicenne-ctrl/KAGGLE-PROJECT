@@ -301,7 +301,7 @@ def density_on_target(data: pd.DataFrame, target_name: str, column_name: str, ax
     return ax
         
 # Bar graph visualization  : 
-def plot_barh_graph(values, labels, name_value, name_labels, color, ax):
+def plot_barh_graph(values: List[float], labels: List[str], color: str = None, ax: plt.axes = None, name_value: str = None, name_labels: str = None):
 
     """ The goal of this function is to display a bar graph, with the option
     Args:
@@ -372,7 +372,7 @@ def plot_barh_graph(values, labels, name_value, name_labels, color, ax):
     
     return ax
 
-def plot_bar_graph(values, labels, name_value, name_labels, color, ax=None):
+def plot_bar_graph(values: List[float], labels: List[str], color: str = None, ax: plt.axes = None, name_value: str = None, name_labels: str = None):
     """ The goal of this function is to display a vertical bar graph using sns.barplot.
     
     Args:
@@ -387,7 +387,7 @@ def plot_bar_graph(values, labels, name_value, name_labels, color, ax=None):
         plt.Axes: The axes object with the plot
     """
     if ax is None:
-        fig, ax = plt.subplots(figsize=(40, 20))
+        fig, ax = plt.subplots(figsize=(10, 8))
 
     else:
         fig = ax.figure

@@ -1,14 +1,18 @@
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.impute import KNNImputer
+from sklearn.neighbors import NearestNeighbors
+from sklearn.ensemble import BaggingClassifier
+from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
 import numpy as np
 import pandas as pd
-from sklearn.impute import KNNImputer
-import matplotlib
 import seaborn as sns
 import webcolors
-from sklearn.neighbors import NearestNeighbors
+
 from typing import List, Tuple, Optional
-from sklearn.cluster import KMeans
 from collections import Counter
 
 
@@ -18,6 +22,134 @@ from collections import Counter
      Function to use KnnImputer on a dataset
 ------------------------------------------------------------------------------------------------------------------------------------        
 """
+
+def labelize_data(train: pd.DataFrame, test: pd.DataFrame, display_corr_map: bool = True):
+    """
+
+    Args:
+        train (pd.DataFrame): _description_
+        test (pd.DataFrame): _description_
+        display_corr_map (bool, optional): _description_. Defaults to True.
+
+    Returns:
+        _type_: _description_
+    """
+    
+    train_copy = train.copy()
+    test_copy = test.copy()
+    
+    encoder = LabelEncoder()
+    print("[INFO] : labelize processing...")
+    
+    for col in train.select_dtypes(include=['object', 'category']).columns:   
+        print("labelize : " + col)     
+        train_copy[col] = encoder.fit_transform(train_copy[col])
+        test_copy[col] = encoder.transform(test_copy[col])
+        
+    print("[INFO] : end labelize processing")
+    
+    # correlation
+    correlation = train_copy.corr()
+    sns.heatmap(correlation, cmap = 'magma')
+    if display_corr_map:
+        plt.show()
+    
+        
+    return train_copy, test_copy
+        
+def bag_model(model, cross_val: bool, x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFrame, y_val: pd.Series):
+    
+    """ function to use the baggingclassifier method
+    
+    Args:
+        model (XGBClassifier | RandomForestClassifier ...)
+        
+        cross_val (bool):
+            True by default, if we want or not to do cross validation
+            
+        x_train (pd.DataFrame) : by default will take the x_train variable defined in the notebook
+        y_train (pd.Series) : by default will take the y_train variable defined in the notebook
+        x_val (pd.DataFrame) : by default will take the x_val variable defined in the notebook
+        y_val (pd.Series) : by default will take the y_val variable defined in the notebook
+            
+
+    Returns:
+        the trained model
+    """
+    
+    print("[INFO] : BaggingClassifier processing...")
+    bag = BaggingClassifier(estimator=model,
+                            n_estimators=10, 
+                            random_state=0).fit(x_train, y_train)
+
+    predictions_bag = bag.predict(x_val)
+
+    print("accuracy bag: ",  accuracy_score(y_val, predictions_bag))
+    print()
+
+    if cross_val:
+        print("[INFO] : cross validation")
+        scores = cross_val_score(bag, x_train, y_train, cv=5, scoring='accuracy')
+        print("Cross-validation accuracy scores: ", scores)
+        print("Mean cross-validation accuracy: ", scores.mean())
+        
+        print("[INFO] : end cross validation")
+        print()
+        
+    print("[INFO] : end bagging process")
+    return bag
+        
+def train_model(model, cross_val: bool, x_train : pd.DataFrame, y_train : pd.Series , 
+                x_val : pd.DataFrame, y_val : pd.Series):
+    
+    """train model
+
+        Args:
+            model (_type_): 
+                the model we want
+            cross_val (bool): 
+                if we want the cross val
+                
+            x_train (pd.DataFrame, optional): 
+                Defaults to x_train.
+                
+            y_train (pd.Series, optional): 
+                Defaults to y_train.
+                
+            x_val (pd.DataFrame, optional):
+                Defaults to x_val.
+                
+            y_val (pd.Series, optional):
+                Defaults to y_val.
+                
+        Returns:
+            the trained model
+    """
+    
+    if cross_val:
+        print("[INFO] : cross val score...")
+        # Perform cross-validation
+        cv_scores = cross_val_score(model, x_train, y_train, cv=5, scoring='accuracy')  # 5-fold CV
+
+        # Print each fold's score and the mean score
+        print("Cross-validation scores for each fold:", cv_scores)
+        print("Mean CV score:", cv_scores.mean())
+        print("Standard deviation of CV scores:", cv_scores.std())
+        print()
+
+    print("[INFO] : train model...")
+    model.fit(x_train, y_train)
+    pred_cat = model.predict(x_val)
+    print("[INFO] : end training")
+    print()
+
+    print("Accuracy : ",  accuracy_score(y_val, pred_cat))
+    
+    cm = confusion_matrix(y_val, pred_cat)
+    sns.heatmap(cm,annot = True,fmt = ".1f")
+    plt.show()
+    
+    return model
 
 def encode_data_keep_nan(train: pd.DataFrame, test: pd.DataFrame):
     """
